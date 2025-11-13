@@ -1,0 +1,6 @@
+httpx
+pydantic
+youtube-transcript-api
+google-genai
+requests
+beautifulsoup4
