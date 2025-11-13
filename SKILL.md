@@ -65,6 +65,9 @@ from servers.transcribe import (
     get_cached,               # Retrieve cached transcript
     list_cache,               # List all cached transcripts
 
+    # Transcript Formatting
+    format_transcript,        # Format raw transcripts into clean documents
+
     # Batch Processing (50% cost reduction)
     create_batch_transcription,  # Submit batch job
     check_batch_status,          # Check job progress
@@ -148,6 +151,24 @@ if cached:
         print(result['transcript'])
 ```
 
+**Transcript Formatting:**
+```python
+# Get raw transcript and format it
+raw_transcript = get_transcript("video-id")
+
+# Format with speaker labels, sections, and cleanup
+formatted = format_transcript(
+    raw_transcript,
+    title="MCP Discussion",  # Optional custom title
+    include_timestamps=True,
+    clean_filler_words=True,
+    detect_sections=True
+)
+
+print(formatted)
+# Output: Clean markdown with bullet points, bold speaker names, section headings
+```
+
 ## Function Overview
 
 ### YouTube & Podcast
@@ -159,6 +180,9 @@ if cached:
 ### Cache Management
 - `get_cached()` - Retrieve cached transcript by cache key
 - `list_cache()` - List all cached transcripts with metadata
+
+### Transcript Formatting
+- `format_transcript()` - Format raw transcripts into clean documents with speaker labels, sections, and timestamps
 
 ### Batch Processing (50% Cost Savings)
 - `create_batch_transcription()` - Submit batch transcription job

@@ -24,6 +24,7 @@ Quick Start:
 from .youtube import get_transcript
 from .podcast import find_rss, parse_rss, transcribe_episode
 from .cache import get_cached, list_cache
+from .format import format_transcript
 from .batch import (
     create_batch_transcription,
     check_batch_status,
@@ -45,6 +46,9 @@ __all__ = [
     # Cache
     'get_cached',
     'list_cache',
+
+    # Formatting
+    'format_transcript',
 
     # Batch (50% cost reduction)
     'create_batch_transcription',

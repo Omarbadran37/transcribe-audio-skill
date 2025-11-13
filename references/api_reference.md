@@ -18,7 +18,8 @@ from servers.transcribe import (
     parse_rss,
     transcribe_episode,
     get_cached,
-    list_cache
+    list_cache,
+    format_transcript
 )
 ```
 
@@ -360,6 +361,129 @@ for item in cached:
     print(f"  Key: {item['cache_key']}")
     print(f"  Cached: {item['cached_at']}")
 ```
+
+---
+
+## Transcript Formatting
+
+### `format_transcript()`
+
+Format raw transcript into clean, professional document using Google Gemini.
+
+**Signature:**
+```python
+def format_transcript(
+    raw_transcript: str,
+    api_key: str = None,
+    title: str = None,
+    include_timestamps: bool = True,
+    clean_filler_words: bool = True,
+    detect_sections: bool = True
+) -> str
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `raw_transcript` | str | *required* | Raw transcript text to format |
+| `api_key` | str | `None` | Google AI API key (uses GOOGLE_API_KEY env if not provided) |
+| `title` | str | `None` | Document title (auto-generated if None) |
+| `include_timestamps` | bool | `True` | Include [MM:SS] timestamps in output |
+| `clean_filler_words` | bool | `True` | Remove filler words (um, uh, you know) |
+| `detect_sections` | bool | `True` | Insert section headings based on topics |
+
+**Returns:** `str` - Formatted markdown document
+
+**Raises:**
+- `ImportError` - If google-genai package not installed
+- `ValueError` - If GOOGLE_API_KEY not set and api_key not provided
+
+**Features:**
+- Creates descriptive title (auto-generated or custom)
+- Identifies all speakers (e.g., Alex, Michael, John)
+- Formats dialogue as bullet points with bold speaker names
+- Inserts section headings based on conversation flow
+- Corrects grammar, spelling, and punctuation
+- Removes filler words while preserving meaning
+- Preserves timestamps in [MM:SS] format
+
+**Example:**
+```python
+# Get raw transcript
+raw = get_transcript("video-id")
+
+# Format with all options
+formatted = format_transcript(
+    raw,
+    title="MCP Server Discussion",
+    include_timestamps=True,
+    clean_filler_words=True,
+    detect_sections=True
+)
+
+print(formatted)
+```
+
+**Output Format:**
+```markdown
+# MCP Server Discussion
+
+## Introduction
+
+* **Alex:** [00:00] Welcome everyone to today's discussion about MCP servers.
+* **Michael:** [00:15] Thanks for having me. I'm excited to talk about this topic.
+
+## What is MCP?
+
+* **Alex:** [01:30] Let's start with the basics. What exactly is MCP?
+* **Michael:** [01:45] MCP stands for Model Context Protocol. It's a way to...
+
+## Implementation Details
+
+* **John:** [05:20] How would someone get started implementing this?
+* **Alex:** [05:35] Great question. The first step is to...
+
+## Future of MCP
+
+* **Michael:** [15:20] Where do you see this technology going?
+* **Alex:** [15:35] I think we'll see widespread adoption in the next year...
+```
+
+**Use Cases:**
+- Clean up messy transcripts for sharing
+- Create professional documentation from interviews
+- Format podcast transcripts for blog posts
+- Generate readable meeting notes
+- Prepare transcripts for publication
+
+**Integration Example:**
+```python
+# Transcribe and format in one workflow
+raw_transcript = transcribe_episode(
+    audio_url,
+    speaker_diarization=True,
+    include_timestamps=True
+)
+
+# Format the result
+formatted = format_transcript(
+    raw_transcript,
+    title="Podcast Episode 42",
+    clean_filler_words=True,
+    detect_sections=True
+)
+
+# Save to file
+with open('formatted_transcript.md', 'w') as f:
+    f.write(formatted)
+```
+
+**Tips:**
+- Use `title=None` to let Gemini generate a descriptive title
+- Set `clean_filler_words=False` to preserve exact wording
+- Set `detect_sections=False` for simple, flat transcripts
+- Works with both YouTube and podcast transcripts
 
 ---
 
